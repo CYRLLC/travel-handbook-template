@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#17324d">
+  <meta name="description" content="用表單編輯、完整備份與離線瀏覽的旅行手冊模板">
+  <title>旅遊手冊範本 · Travel Handbook Template</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="trip.config.js" defer></script>
+  <script src="vendor/leaflet.js" defer></script>
+  <script src="travel-store.js" defer></script>
+  <script src="travel-manager.js" defer></script>
+  <script src="app.js" defer></script>
+  <script src="weather.js" defer></script>
+  <script src="map.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="hero">
+    <nav class="topbar" aria-label="主要導覽">
+      <a class="brand" href="#top"><span aria-hidden="true">✦</span><span>TRAVEL BOOK</span></a>
+      <div class="top-actions">
+        <button id="installApp" type="button" hidden>安裝到裝置</button>
+        <button id="notificationsLauncher" type="button" aria-haspopup="dialog">動態 <span id="notificationCount" hidden></span></button>
+      </div>
+    </nav>
+    <div class="hero-grid" id="top">
+      <div>
+        <p class="eyebrow">REUSABLE TRAVEL HANDBOOK</p>
+        <h1 id="tripTitle">下一趟旅程</h1>
+        <p class="hero-copy" id="tripSubtitle">填好表單，就能開始下一趟旅程</p>
+        <div class="hero-meta" aria-label="旅程資訊">
+          <span id="travelDates">設定日期</span><span id="travelers">設定旅伴</span><span id="travelTimezone">設定時區</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <small>START HERE</small><strong>從空白開始，或複製一趟旅程</strong><p>按下「建立旅程」，填入日期與旅伴。每張每日卡片都可以直接編輯，完成後匯出一份完整備份。</p>
+      </div>
+    </div>
+  </header>
+  <section class="library-toolbar" aria-label="旅程管理">
+    <label>目前旅程<select id="tripPicker"></select></label>
+    <div class="library-actions"><button id="newTrip" class="primary-button" type="button">建立旅程</button><button id="duplicateTrip" class="secondary-button" type="button">複製旅程</button><button data-edit-trip class="secondary-button" type="button">編輯旅程設定</button><button id="exportTemplate" class="secondary-button" type="button">匯出可重用模板</button><button id="deleteTrip" class="secondary-button" type="button">移除本機旅程</button></div>
+    <p id="libraryStatus" class="status-line" role="status"></p>
+  </section>
+  <nav class="section-nav" aria-label="頁面區段">
+    <a href="#overview">總覽</a><a href="#itinerary">每日行程</a><a href="#reservations">預約</a><a href="#shopping">待購</a><a href="#checklist">檢查表</a>
+  </nav>
+  <main id="main">
+    <section class="section" id="overview">
+      <div class="section-heading"><div><p class="eyebrow dark">01 · OVERVIEW</p><h2>先把共識放在最前面</h2></div><p>在「編輯旅程設定」管理總覽、日期、旅伴、預約與檢查表。</p></div>
+      <div class="intro-grid" id="introGrid"></div>
+      <div class="privacy-note"><b>隱私邊界</b><span>行程、待購、留言與勾選都保存在這個瀏覽器。完整旅程檔可交給旅伴匯入，不會自動同步；清除瀏覽器資料前請先備份。地圖與啟用的天氣需要連線。</span></div>
+    </section>
+    <section class="section itinerary-section" id="itinerary">
+      <div class="section-heading"><div><p class="eyebrow dark">02 · DAILY PLAN</p><h2>每日行程</h2></div><p>固定交通或預約日可以鎖定；其他卡片可互換日期，但卡片內的完整行程會一起移動。</p></div>
+      <div class="day-toolbar"><div class="day-tabs" id="dayTabs" role="tablist" aria-label="選擇日期"></div><button class="secondary-button" id="resetSchedule" type="button">恢復原始日期</button></div>
+      <p class="status-line" id="dayViewStatus" role="status"></p>
+      <div class="day-list" id="dayList"></div>
+    </section>
+    <section class="section soft-section" id="reservations">
+      <div class="section-heading"><div><p class="eyebrow dark">03 · RESERVATIONS</p><h2>預約控制台</h2></div><p>可在旅程設定新增或移除預約。分享檔案前，請檢查摘要與連結是否含私人資訊。<button data-edit-trip class="secondary-button" type="button">編輯預約</button></p></div>
+      <div class="reservation-list" id="reservationList"></div>
+    </section>
+    <section class="section" id="shopping">
+      <div class="section-heading"><div><p class="eyebrow dark">04 · SHARED SHOPPING</p><h2>待購清單</h2></div><p>記錄想買的商品，再補上順路日期與店舖。完整旅程匯出時會一併保留。</p></div>
+      <form class="shopping-form" id="shoppingForm">
+        <label>提出者<input id="shoppingAuthor" maxlength="24" autocomplete="nickname" required></label>
+        <label>品名<input id="shoppingItem" maxlength="120" required></label>
+        <label class="wide">補充說明<textarea id="shoppingDetails" maxlength="500" rows="2"></textarea></label>
+        <button class="primary-button" type="submit">加入待購</button>
+      </form>
+      <div class="filter-row" id="shoppingFilters" aria-label="待購狀態篩選">
+        <button type="button" data-shopping-filter="all" aria-pressed="true">全部</button><button type="button" data-shopping-filter="pending">待安排</button><button type="button" data-shopping-filter="planned">已安排</button><button type="button" data-shopping-filter="bought">已買到</button>
+      </div>
+      <p class="status-line" id="shoppingStatus" role="status">讀取共同清單中…</p><div class="shopping-list" id="shoppingList"></div>
+    </section>
+    <section class="section soft-section" id="checklist">
+      <div class="section-heading"><div><p class="eyebrow dark">05 · CHECKLIST</p><h2>行前檢查與備註</h2></div><p>勾選與備註即時保存。換装置請用完整旅程檔匯入。<button data-edit-trip class="secondary-button" type="button">編輯檢查表</button></p></div>
+      <div class="checklist-grid" id="checklistGrid"></div>
+      <div class="notes-panel">
+        <label>旅程備註<textarea id="tripNotes" rows="6" placeholder="例如：抵達後先買交通卡；雨天改走室內備案。"></textarea></label>
+        <div class="notes-actions"><span id="progressStatus" role="status">已載入本機進度</span><button class="secondary-button" id="exportProgress" type="button">匯出完整旅程</button><label class="file-button">匯入旅程／模板<input id="importProgress" type="file" accept="application/json" hidden></label><button class="secondary-button" id="printHandbook" type="button">列印</button></div>
+      </div>
+    </section>
+  </main>
+  <footer><div><b>旅遊手冊範本</b><p>直接用表單編輯；定期匯出備份。<a href="使用說明.html" target="_blank" rel="noreferrer">使用說明 ↗</a></p><p>天氣來源：<a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>，天氣資料採 <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>；服務使用條件另計。</p></div><a href="#top">回到頁首 ↑</a></footer>
+  <button class="comments-launcher" id="commentsLauncher" type="button" aria-haspopup="dialog"><span aria-hidden="true">✎</span><span>旅伴留言</span></button>
+  <dialog class="panel-dialog" id="commentsDialog" aria-labelledby="commentsTitle">
+    <header><div><small>TRAVEL MATES</small><h2 id="commentsTitle">旅伴留言板</h2></div><button type="button" data-close-dialog="commentsDialog" aria-label="關閉">×</button></header>
+    <form id="commentForm"><div class="form-grid"><label>你的名字<input id="commentAuthor" maxlength="24" autocomplete="nickname" required></label><label>分類<select id="commentTopic"></select></label></div><label>留言<textarea id="commentMessage" maxlength="600" rows="3" required></textarea></label><div class="dialog-actions"><button class="primary-button" type="submit">送出留言</button><button class="secondary-button" id="reloadComments" type="button">重新整理</button><span id="commentStatus" role="status"></span></div></form>
+    <div class="comment-list" id="commentList"></div>
+  </dialog>
+  <dialog class="panel-dialog" id="notificationsDialog" aria-labelledby="notificationsTitle">
+    <header><div><small>ACTIVITY</small><h2 id="notificationsTitle">旅伴動態</h2></div><button type="button" data-close-dialog="notificationsDialog" aria-label="關閉">×</button></header>
+    <label>目前使用者<input id="notificationTraveler" maxlength="24" autocomplete="nickname"></label>
+    <div class="dialog-actions"><button class="secondary-button" id="reloadNotifications" type="button">重新整理</button><button class="secondary-button" id="markNotificationsRead" type="button">全部標為已讀</button><span id="notificationStatus" role="status"></span></div><div class="notification-list" id="notificationList"></div>
+  </dialog>
+  <dialog class="editor-dialog" id="tripEditor" aria-labelledby="editorTitle"><header><h2 id="editorTitle">編輯旅程</h2><button type="button" data-close-dialog="tripEditor" aria-label="關閉編輯">×</button></header><form id="tripEditorForm"><div id="editorBody" class="editor-body"></div><div class="editor-footer"><p id="editorStatus" role="status"></p><button class="secondary-button" type="button" data-close-dialog="tripEditor">取消</button><button class="primary-button" type="submit">儲存旅程</button></div></form></dialog>
+  <dialog class="move-dialog" id="moveDialog" aria-labelledby="moveTitle"><form method="dialog"><h2 id="moveTitle">調動行程</h2><p id="moveDescription"></p><label>交換到<select id="moveTarget"></select></label><div class="dialog-actions"><button class="secondary-button" value="cancel">取消</button><button class="primary-button" id="confirmMove" value="default">確認交換</button></div></form></dialog>
+  <dialog class="map-dialog" id="routeMapDialog" aria-labelledby="mapDialogTitle"><header><div><small id="mapDialogDate"></small><h2 id="mapDialogTitle">路線地圖</h2></div><button type="button" data-close-dialog="routeMapDialog" aria-label="關閉">×</button></header><div class="map-dialog-layout"><div class="trip-map" id="dialogMap"></div><aside><ol id="dialogMapStops"></ol><a class="primary-button link-button" id="dialogMapRoute" target="_blank" rel="noreferrer">Google Maps 導航 ↗</a></aside></div></dialog>
+  <div class="update-notice" id="updateNotice" hidden role="status"><span>網站有新版可用。</span><button id="refreshUpdate" type="button">重新整理</button><button id="dismissUpdate" type="button">稍後</button></div>
+  <noscript>此旅行手冊需要 JavaScript 才能載入設定與離線功能。</noscript>
+</body>
+</html>

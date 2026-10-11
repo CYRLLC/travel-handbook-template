@@ -1,0 +1,35 @@
+# Generated deployment bundle
+dist/
+
+# Local Cloudflare/Wrangler state
+.wrangler/
+wrangler.toml
+.dev.vars
+.env
+.env.*
+
+# Dependencies and logs
+node_modules/
+npm-debug.log*
+.test-artifacts/
+test-results/
+playwright-report/
+.sensitive-scan.local.*
+exports/
+backups/
+archives/
+
+# Generated archives
+*.zip
+*-progress.json
+travel-backup*.json
+travel-template*.json
+*.bundle
+*.sql.backup
+*.sqlite
+*.sqlite3
+*.db
+
+# Operating-system files
+.DS_Store
+Thumbs.db

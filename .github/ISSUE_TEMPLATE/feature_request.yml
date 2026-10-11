@@ -1,0 +1,14 @@
+name: Feature request
+description: Suggest an improvement to the reusable template
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed behavior
+      description: Avoid personal trip details. Mention any new network requests or storage requirements.

@@ -1,0 +1,15 @@
+{
+  "name": "旅遊手冊範本 · Travel Handbook Template",
+  "short_name": "旅遊手冊",
+  "description": "表單編輯、完整備份與離線瀏覽的旅行手冊",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f3ea",
+  "theme_color": "#17324d",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

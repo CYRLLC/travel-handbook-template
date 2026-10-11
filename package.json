@@ -1,0 +1,16 @@
+{
+  "name": "travel-handbook-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reusable local-first travel handbook template with editable trips, backup and offline support.",
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "check": "node tests/check-syntax.cjs",
+    "test:privacy": "node tests/sensitive-scan.cjs",
+    "test:smoke": "node tests/smoke.cjs",
+    "test": "npm run check && npm run test:privacy && npm run test:smoke",
+    "build": "pwsh -NoProfile -File ./build.ps1"
+  },
+  "devDependencies": { "playwright": "1.64.0" }
+}
